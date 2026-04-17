@@ -2,13 +2,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebas
 import { getFirestore, writeBatch, doc, collection } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
   const firebaseConfig = {
-    apiKey: "AIzaSyBd7jSaXn8Yh3x1RL5JaIczWFB0NxdcaQw",
-    authDomain: "mscdb-8d5bf.firebaseapp.com",
-    projectId: "mscdb-8d5bf",
-    storageBucket: "mscdb-8d5bf.firebasestorage.app",
-    messagingSenderId: "115320223781",
-    appId: "1:115320223781:web:3fe22e50741d52c413a7cc",
-    measurementId: "G-GS76V0HJM9"
+    apiKey: "AIzaSyCdOksRA1aa6RXvZBvzbUVG5Ql7IN9vywk",
+    authDomain: "mscdb-36157.firebaseapp.com",
+    projectId: "mscdb-36157",
+    storageBucket: "mscdb-36157.firebasestorage.app",
+    messagingSenderId: "738239395493",
+    appId: "1:738239395493:web:8bb22744c8ad89b4ffbf4c"
   };
   
 const app = initializeApp(firebaseConfig);
