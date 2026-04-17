@@ -8,7 +8,15 @@
 		<link href='https://fonts.googleapis.com/css?family=Ek+Mukta:300' rel='stylesheet' type='text/css'>
 
 		<script type="module">
-			import { saveTapsToDatabase } from './database.js';
+			import { saveTapsToDatabase, db } from './database.js';
+			import { runGlobalStats } from './analysis.js';
+
+			import { runSimulation } from './seed.js';
+			window.runSimulation = runSimulation; // Make it reachable from the console
+
+			window.onLoad = onLoad;
+			window.saveDependentVariable = saveDependentVariable;
+			window.startNext = startNext;
 
 			var totalTouchDuration = 0;
 
@@ -29,8 +37,25 @@
 			var interfaceVariations = 2;
 			var interfaceSequence = 1;
 
+			window.addEventListener('DOMContentLoaded', async () => {
+				onLoad(); 
+				
+				const stats = await runGlobalStats(db);
+				if(stats) {
+					const statsSummary = `
+						<div class="stats-box" style="margin-top:10px; border-top:1px solid #eee; font-size:12px; color:#555;width:20vw">
+							<b>Global Research Stats:</b><br>
+							• Platform — Android: ${stats.android}ms| PC: ${stats.pc}ms<br>
+							• Interface — Feedback: ${stats.feedback}ms | No-Feedback: ${stats.noFeedback}ms<br>
+							• Completion Rate: ${Math.round((stats.completed / (stats.completed + stats.dropped || 1)) * 100)}%
+						</div>
+					`;
+					document.getElementById("instruction-screen").insertAdjacentHTML('beforeend', statsSummary);
+				}
+			});			
+
 			//Called when page finishes loading
-			function onLoad(){
+			async function onLoad(){
 				var el = document.getElementById('tapHere');
 				d = new Date();
 
@@ -159,7 +184,9 @@
 					case "touchstart":
 					tep.preventDefault();
 
+
 					case "mousedown":
+					playTapSound();
 					startTap = d.getTime();
 					if(tapSessionStartTime==0)
 						tapSessionStartTime = startTap;
@@ -194,6 +221,11 @@
 						//tapTimeArray.push(duration);
 						totalTouchDuration+=duration;
 						var meanTouchDuration = totalTouchDuration / tapCounter;
+
+						document.getElementById("counter").innerHTML = `
+                		<span class="label2">Progress: ${tapCounter}/50</span><br>
+                		${showFeedback ? 'Mean: <span class="spanTime">'+Math.round(meanTouchDuration)+'</span> ms' : ''}
+            			`;
 
 						var tap = {};
 						//tap["ID"]=uniqueIdentifier;
@@ -281,22 +313,34 @@
 
 
 			}
-			window.onLoad = onLoad;
-			window.saveDependentVariable = saveDependentVariable;
-			window.startNext = startNext;
+
+			function playTapSound() {
+				const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+				const oscillator = audioCtx.createOscillator();
+				const gainNode = audioCtx.createGain();
+
+				oscillator.type = 'sine';
+				oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); // High pitch blip
+				gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+				gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+
+				oscillator.connect(gainNode);
+				gainNode.connect(audioCtx.destination);
+
+				oscillator.start();
+				oscillator.stop(audioCtx.currentTime + 0.1);
+			}
+
 		</script>
 
 	</head>
 
 	<body onLoad="onLoad()">
     <div id="main-wrapper">
-        <!-- SCREEN 1: Instructions -->
         <div id="instruction-screen">
-            <h2>Tapity Tap Tap Counter</h2>
-            <p class="label2">Thank you for participating! Please follow these steps:</p>
             <ul class="label2" style="text-align: left;">
                 <li>Select your device type below to start.</li>
-                <li>Tap the icon as <b>quickly and accurately</b> as possible.</li>
+                <li>Tap the icon as <b>quickly and accurately</b></li>
                 <li>You will perform <b>2 rounds</b> of 50 taps each.</li>
                 <li>Please do not close the tab until you see "Experiment Complete".</li>
             </ul>
@@ -305,8 +349,6 @@
                 <button type="button" onclick="saveDependentVariable('pc')" id="variable2">PC / Laptop</button>
             </div>
         </div>
-
-        <!-- SCREEN 2: The Experiment (Hidden initially) -->
         <div id="container" class="container" style="display:none;">
             <div id="experiment-header">
                 <span id="device-indicator" class="label2"></span>
