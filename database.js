@@ -1,5 +1,5 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getFirestore, writeBatch, doc, collection } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, writeBatch, doc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCdOksRA1aa6RXvZBvzbUVG5Ql7IN9vywk",
@@ -11,7 +11,7 @@ import { getFirestore, writeBatch, doc, collection } from "https://www.gstatic.c
   };
   
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+export const db = getFirestore(app);
 
 export async function saveTapsToDatabase(sessionId, platform, tapsArray) {
     try {
