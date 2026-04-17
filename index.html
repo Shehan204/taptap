@@ -11,9 +11,6 @@
 			import { saveTapsToDatabase, db } from './database.js';
 			import { runGlobalStats } from './analysis.js';
 
-			import { runSimulation } from './seed.js';
-			window.runSimulation = runSimulation; // Make it reachable from the console
-
 			window.onLoad = onLoad;
 			window.saveDependentVariable = saveDependentVariable;
 			window.startNext = startNext;
