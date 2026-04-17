@@ -11,6 +11,7 @@
 			import { saveTapsToDatabase, db } from './database.js';
 			import { runGlobalStats } from './analysis.js';
 
+
 			window.onLoad = onLoad;
 			window.saveDependentVariable = saveDependentVariable;
 			window.startNext = startNext;
@@ -40,7 +41,7 @@
 				const stats = await runGlobalStats(db);
 				if(stats) {
 					const statsSummary = `
-						<div class="stats-box" style="margin-top:10px; border-top:1px solid #eee; font-size:12px; color:#555;width:20vw">
+						<div class="stats-box" style=" font-size:12px; color:#555;width:20vw">
 							<b>Global Research Stats:</b><br>
 							• Platform — Android: ${stats.android}ms| PC: ${stats.pc}ms<br>
 							• Interface — Feedback: ${stats.feedback}ms | No-Feedback: ${stats.noFeedback}ms<br>
